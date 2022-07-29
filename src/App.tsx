@@ -1,47 +1,60 @@
 import { useEffect, useState } from 'react';
-import reactLogo from './assets/react.svg';
 import './App.css';
 import { invoke } from '@tauri-apps/api';
+import Box from '@mui/material/Box';
+import { Tab, Tabs } from '@mui/material';
 
 function App() {
-  const [count, setCount] = useState(0);
-  const [packagesInstalled, setPackagesInstalled] = useState<any>();
+  const [packagesInstalled, setPackagesInstalled] = useState<string[]>([]);
+  const [currentTab, setCurrentTab] = useState(0);
 
   useEffect(function() {
-    invoke("get_installed_packages").then(packages => {
+    invoke("get_installed_packages").then((packages: any) => {
       setPackagesInstalled(packages);
-      console.log(packages);
     }).catch(err => {
       console.log(err)
     })
   }, [])
 
-  return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
+  const packagesCards = packagesInstalled?.map((pkg: string) => {
+      return (
         <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
+          {pkg}
         </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-      <p style={{whiteSpace: "pre-line"}}>
-        {packagesInstalled ? packagesInstalled : "Searching for packages installed"}
-      </p>
-    </div>
+      )
+  })
+
+  return (
+    <Box className="App">
+      <Box display="flex">
+        <Tabs
+          orientation="vertical"
+          color="white"
+          value={currentTab}
+          onChange={(_, newValue) => {setCurrentTab(newValue)}}
+          sx={{
+            backgroundColor: "#4b6383"
+          }}
+          TabIndicatorProps={{
+            sx: {
+              backgroundColor: "snow",
+              height: "3px",
+            }
+          }}
+        >
+          <Tab label="Installés" value={0} color="white"/>
+          <Tab label="Rechercher" value={1} />
+        </Tabs>
+        <Box padding="10px">
+          <Box display="flex" borderBottom="solid black 2px">
+            <h1 style={{fontSize: "1.5em"}}>Packages installed</h1>
+          </Box>
+          <Box overflow="auto">
+            {packagesCards}
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   )
 }
 

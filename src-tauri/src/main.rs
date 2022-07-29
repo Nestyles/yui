@@ -6,13 +6,17 @@
 use std::process::Command;
 
 #[tauri::command]
-fn get_installed_packages() -> String {
+fn get_installed_packages() -> Vec<String> {
     let output = Command::new("pacman")
         .args(["-Q"])
         .output()
         .unwrap();
 
-    std::str::from_utf8(&output.stdout).unwrap().to_string()
+    let splitted_packages: Vec<&str> = std::str::from_utf8(&output.stdout)
+        .unwrap()
+        .split("\n").collect();
+
+    splitted_packages.into_iter().map(|package| package.to_string()).collect()
 }
 
 fn main() {
