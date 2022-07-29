@@ -1,5 +1,6 @@
 # yui: GUI for pacman and yay
 
+In very early stage not usage at the moment
+
 ## Launch in dev mode
-`npm start` to start the react app
-`cargo tauri` to start the tauri app with hot reload
+`npm run tauri dev` to start the entire project with vite
